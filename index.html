@@ -3,60 +3,201 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pranesh's Art Gallery</title>
+    <title>Sketch Studio</title>
+    <!-- Add Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
+        /* CSS reset & premium styling */
+        :root {
+            --bg-color: #0d1117;
+            --text-color: #c9d1d9;
+            --accent-color: #58a6ff;
+            --nav-bg: rgba(13, 17, 23, 0.85);
+            --card-bg: #161b22;
+        }
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f4f4;
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
             margin: 0;
-            padding: 20px;
+            padding: 0;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
+            overflow-x: hidden;
+        }
+        /* Header */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            background: var(--nav-bg);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
             align-items: center;
         }
-
-        h1 {
-            color: #333;
-            margin-bottom: 30px;
-            border-bottom: 2px solid #333;
-            padding-bottom: 10px;
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #fff;
+            text-decoration: none;
+            background: linear-gradient(90deg, #ff7eb3, #ff758c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
-
-        .grid-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            grid-gap: 20px;
+        .nav-buttons a {
+            color: var(--text-color);
+            text-decoration: none;
+            margin-left: 20px;
+            font-weight: 600;
+            transition: color 0.3s;
+            cursor: pointer;
+            padding: 8px 16px;
+            border-radius: 20px;
+        }
+        .nav-buttons a:hover, .nav-buttons a.active {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+        }
+        /* Containers */
+        .view {
+            display: none;
+            flex-grow: 1;
+            padding: 2rem;
             max-width: 1200px;
+            margin: 0 auto;
             width: 100%;
+            box-sizing: border-box;
+            animation: fadeIn 0.5s ease;
         }
-
-        .art-card {
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease;
-        }
-
-        .art-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .art-card img {
-            width: 100%;
-            height: 400px;
+        .view.active {
             display: block;
         }
-
-        .art-info {
-            padding: 15px;
-            text-align: center;
-            font-weight: bold;
-            color: #555;
-            background: #fff;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-
-        /* --- Lightbox Styles --- */
+        /* Gallery */
+        .filters {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        .filter-btn {
+            background: var(--card-bg);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: var(--text-color);
+            padding: 8px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--accent-color);
+            color: #000;
+            border-color: var(--accent-color);
+        }
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+        }
+        .art-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+            cursor: pointer;
+            position: relative;
+        }
+        .art-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.5);
+        }
+        .art-card img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.4s ease;
+        }
+        .art-card:hover img {
+            transform: scale(1.05);
+        }
+        .art-info-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: linear-gradient(transparent, rgba(0,0,0,0.9));
+            padding: 20px 15px;
+            box-sizing: border-box;
+            color: #fff;
+            transform: translateY(10px);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+        .art-card:hover .art-info-overlay {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        .art-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 0;
+        }
+        .art-category {
+            font-size: 0.8rem;
+            color: #aaa;
+            margin-top: 5px;
+        }
+        /* About Screen */
+        .about-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 50px;
+            min-height: 70vh;
+        }
+        .about-content {
+            flex: 1;
+        }
+        .about-content h1 {
+            font-size: 3rem;
+            color: #fff;
+            margin-bottom: 20px;
+            background: linear-gradient(90deg, #ff7eb3, #ff758c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .about-content p {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            color: #aaa;
+            margin-bottom: 20px;
+        }
+        .about-profile {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+        }
+        .about-profile img {
+            width: 100%;
+            max-width: 400px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            border: 2px solid rgba(255,255,255,0.1);
+        }
+        /* Lightbox */
         #lightbox {
             display: none;
             position: fixed;
@@ -65,343 +206,243 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.9);
+            background-color: rgba(13, 17, 23, 0.95);
+            backdrop-filter: blur(5px);
             justify-content: center;
             align-items: center;
+            flex-direction: column;
+            opacity: 0;
+            transition: opacity 0.3s;
         }
-
-        #lightbox img {
+        #lightbox.visible {
+            display: flex;
+            opacity: 1;
+        }
+        #lightbox-img {
             max-width: 90%;
-            max-height: 80%;
-            border: 3px solid white;
-            border-radius: 4px;
+            max-height: 70vh;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
-
-        #lightbox-caption {
-            position: absolute;
-            bottom: 50px;
-            color: white;
-            font-size: 1.5rem;
+        .lightbox-info {
             text-align: center;
+            margin-top: 20px;
+            max-width: 800px;
+            color: white;
+            padding: 0 20px;
         }
-
+        #lightbox-title {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+        #lightbox-desc {
+            font-size: 1.1rem;
+            color: #bbb;
+            line-height: 1.5;
+        }
         .close-btn {
             position: absolute;
-            top: 20px;
-            right: 30px;
+            top: 30px;
+            right: 40px;
             color: white;
             font-size: 40px;
-            font-weight: bold;
+            font-weight: 300;
             cursor: pointer;
+            transition: color 0.3s;
         }
-
-        @media (max-width: 600px) {
+        .close-btn:hover {
+            color: var(--accent-color);
+        }
+        
+        @media (max-width: 768px) {
+            .about-container {
+                flex-direction: column;
+                text-align: center;
+            }
             .grid-container {
-                grid-template-columns: 1fr;
+                grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
             }
         }
     </style>
 </head>
 <body>
 
-    <h1>Sketch & Digital Art Portfolio</h1>
+    <header>
+        <a href="#home" class="logo">Sketch Studio</a>
+        <nav class="nav-buttons">
+            <a href="#home" id="nav-home" class="active">Home</a>
+            <a href="#about" id="nav-about">About</a>
+        </nav>
+    </header>
 
-    <div class="grid-container">
-        <div class="art-card" onclick="openLightbox('vikram.jpg', 'Vikram Pencil Sketch')">
-            <img src="vikram.jpg" alt="Vikram Sketch">
-            <div class="art-info" tabindex="0">Vikram Pencil Sketch</div>
-        </div>
+    <main id="home-view" class="view active">
 
-        <div class="art-card" onclick="openLightbox('thalaiva.jpg', 'Thalaiva (Rajinikanth) Digital Art')">
-            <img src="thalaiva.jpg" alt="Thalaiva Art">
-            <div class="art-info" tabindex="0">Thalaiva (Rajinikanth) Digital Art</div>
+        <div class="grid-container" id="gallery-container">
+            <!-- Cards injected by JS -->
         </div>
+    </main>
 
-        <div class="art-card" onclick="openLightbox('shiva.jpeg', 'Lord Shiva Meditation')">
-            <img src="shiva.jpeg" alt="Lord Shiva Art">
-            <div class="art-info" tabindex="0">Lord Shiva Meditation</div>
+    <main id="about-view" class="view">
+        <div class="about-container">
+            <div class="about-content">
+                <h1>About the Artist</h1>
+                <p>Welcome to Sketch Studio. I am an enthusiastic artist dedicated to exploring various forms of digital and traditional art. The pieces exhibited here range across 3D art, intricate pencil sketches, bold pen art, dynamic illustrations, and creative logo designs.</p>
+                <p>Each artwork is a reflection of my journey, passion, and continuous dedication to the craft. Thank you for visiting and supporting my gallery.</p>
+            </div>
+            <div class="about-profile">
+                <!-- Using Palaniswami.jpeg as a placeholder profile photo based on folder images -->
+                <img src="images/pranesh.jpg" alt="Profile Photo">
+            </div>
         </div>
+    </main>
 
-        <div class="art-card" onclick="openLightbox('sun.jpeg', 'Tropical Sunset')">
-            <img src="sun.jpeg" alt="Sunset Digital Art">
-            <div class="art-info" tabindex="0">Tropical Sunset</div>
+    <div id="lightbox" onclick="closeLightbox(event)">
+        <span class="close-btn" onclick="closeLightbox(event)">&times;</span>
+        <img id="lightbox-img" src="" alt="Large view" onclick="event.stopPropagation()">
+        <div class="lightbox-info" onclick="event.stopPropagation()">
+            <div id="lightbox-title"></div>
+            <div id="lightbox-desc"></div>
         </div>
-
-        <div class="art-card" onclick="openLightbox('suriya.jpg', 'Suriya Pencil Sketch')">
-            <img src="suriya.jpg" alt="Suriya Sketch">
-            <div class="art-info" tabindex="0">Suriya Pencil Sketch</div>
-        </div>
-
-        <div class="art-card" onclick="openLightbox('vadivel.png', 'Vadivelu Illustration')">
-            <img src="vadivel.png" alt="Vadivelu Art">
-            <div class="art-info" tabindex="0">Vadivelu Illustration</div>
-        </div>
-
-        <div class="art-card" onclick="openLightbox('steps.jpeg', '3D Perspective Steps')">
-            <img src="steps.jpeg" alt="3D Steps">
-            <div class="art-info" tabindex="0">3D Perspective Steps</div>
-        </div>
-
-        <div class="art-card" onclick="openLightbox('saint.jpeg', 'Aghori on Motorcycle')">
-            <img src="saint.jpeg" alt="Aghori Art">
-            <div class="art-info" tabindex="0">Aghori on Motorcycle</div>
-        </div>
-
-        <div class="art-card" onclick="openLightbox('sanju.jpg', 'Sanju Portrait')">
-            <img src="sanju.jpg" alt="Sanju Sketch">
-            <div class="art-info" tabindex="0">Sanju Portrait</div>
-        </div>
-
-        <div class="art-card" onclick="openLightbox('superstar.jpg', 'Superstar Statue Concept')">
-            <img src="superstar.jpg" alt="Superstar Tribute">
-            <div class="art-info" tabindex="0">Superstar Statue Concept</div>
-        </div>
-        <div class="art-card" onclick="openLightbox('beard.jpg', 'Beard Concept')">
-            <img src="beard.jpg" alt="Superstar Tribute">
-            <div class="art-info" tabindex="0">Beard Concept</div>
-        </div>
-        <div class="art-card" onclick="openLightbox('beach.jpeg', 'Couples Concept')">
-            <img src="beach.jpeg" alt="Superstar Tribute">
-            <div class="art-info" tabindex="0">Couples Concept</div>
-        </div>
-        <div class="art-card" onclick="openLightbox('baby.jpeg', 'Baby Concept')">
-            <img src="baby.jpeg" alt="Superstar Tribute">
-            <div class="art-info" tabindex="0">Baby Concept</div>
-        </div>
-        <div class="art-card" onclick="openLightbox('arjunreddy.png', 'Arjun Reddy')">
-            <img src="arjunreddy.png" alt="Superstar Tribute">
-            <div class="art-info" tabindex="0">Arjun Reddy</div>
-        </div>
-        <div class="art-card" onclick="openLightbox('amma.png', 'Mother Baby Concept')">
-            <img src="amma.png" alt="Superstar Tribute">
-            <div class="art-info" tabindex="0">Mother Baby Concept</div>
-        </div>
-        <div class="art-card" onclick="openLightbox('a.jpg', 'HipHop Tamizha')">
-            <img src="a.jpg" alt="Superstar Tribute">
-            <div class="art-info" tabindex="0">HipHop Tamizha</div>
-        </div>
-        <div class="art-card" onclick="openLightbox('brindha.jpg', 'Brindha Concept')">
-            <img src="brindha.jpg" alt="Superstar Tribute">
-            <div class="art-info" tabindex="0">Mother Baby Concept</div>
-        </div>
-        <div class="art-card" onclick="openLightbox('darbar.jpg', 'Darbar Concept')">
-            <img src="darbar.jpg" alt="Superstar Tribute">
-            <div class="art-info" tabindex="0">Darbar</div>
-        </div>
-        <div class="art-card" onclick="openLightbox('dhanasekar.jpg', 'Dhanasekar Concept')">
-            <img src="dhanasekar.jpg" alt="Superstar Tribute">
-            <div class="art-info" tabindex="0">Dhanasekar</div>
-        </div>
-        <div class="art-card" onclick="openLightbox('dinesh.jpeg', 'Dinesh Concept')">
-            <img src="dinesh.jpeg" alt="Superstar Tribute">
-            <div class="art-info" tabindex="0">Dinesh </div>
-        </div>
-        <div class="art-card" onclick="openLightbox('dulquer.jpg', 'Dulquer Concept')">
-            <img src="dulquer.jpg" alt="Superstar Tribute">
-            <div class="art-info" tabindex="0">Dulquer Concept</div>
-        </div>
-        <div class="art-card" onclick="openLightbox('dulquer1.png', 'Dulquer Concept')">
-            <img src="dulquer1.png" alt="Superstar Tribute">
-            <div class="art-info" tabindex="0">Dulquer Concept</div>
-        </div>
-        <div class="art-card" onclick="openLightbox('girl.jpeg', 'Girl Concept')">
-            <img src="girl.jpeg" alt="Superstar Tribute">
-            <div class="art-info" tabindex="0">Girl Concept</div>
-        </div>
-        <div class="art-card" onclick="openLightbox('girlboy.jpg', 'Girl Boy Concept')">
-            <img src="girlboy.jpg" alt="Superstar Tribute">
-            <div class="art-info" tabindex="0">Girl Boy Concept</div>
-        </div>
-        <div class="art-card" onclick="openLightbox('girlwithhair.jpeg', 'Girl with Hair Concept')">
-            <img src="girlwithhair.jpeg" alt="Superstar Tribute">
-            <div class="art-info" tabindex="0">Girl with Hair Concept</div>
-        </div>
-        <div class="art-card" onclick="openLightbox('helmet.jpg', 'Helmet Concept')">
-            <img src="helmet.jpg" alt="Superstar Tribute">
-            <div class="art-info" tabindex="0">Helmet Concept</div>
-        </div>
-        <div class="art-card" onclick="openLightbox('img', 'Lord Shiva Meditation')">
-            <img src="img.jpg" alt="Superstar Tribute">
-            <div class="art-info" tabindex="0">Shiva Concept</div>
-        </div>
-        <div class="art-card" onclick="openLightbox('ironman.jpg', 'Ironman Concept')">
-            <img src="ironman.jpg" alt="Superstar Tribute">
-            <div class="art-info" tabindex="0">Ironman Concept</div>
-        </div>
-        <div class="art-card" onclick="openLightbox('jacksparrow.jpeg', 'Jack Sparrow Concept')">
-            <img src="jacksparrow.jpeg" alt="Superstar Tribute">
-            <div class="art-info" tabindex="0">Jack Sparrow Concept</div>
-        </div>
-        <div class="art-card" onclick="openLightbox('joker.png', 'Joker Concept')">
-            <img src="joker.png" alt="Superstar Tribute">
-            <div class="art-info" tabindex="0">Joker Concept</div>
-        </div>
-        <div class="art-card" onclick="openLightbox('joker1.jpeg', 'Joker Concept')">
-            <img src="joker1.jpeg" alt="Superstar Tribute">
-            <div class="art-info" tabindex="0">Joker Concept</div>
-        </div>
-        <div class="art-card" onclick="openLightbox('kabali.jpg', 'Kabali Concept')">
-            <img src="kabali.jpg" alt="Superstar Tribute">
-            <div class="art-info" tabindex="0">Kabali Concept</div>
-        </div>
-        <div class="art-card" onclick="openLightbox('kabali1.jpg', 'Kabali Concept')">
-            <img src="kabali1.jpg" alt="Superstar Tribute">
-            <div class="art-info" tabindex="0">Kabali Concept</div>
-        </div>
-        <div class="art-card" onclick="openLightbox('logo.jpeg', 'Logo Design')">
-            <img src="logo.jpeg" alt="Superstar Tribute">
-            <div class="art-info" tabindex="0">Logo Design</div>
-        </div>
-        <div class="art-card" onclick="openLightbox('m.jpg', '')">
-            <img src="m.jpg" alt="Superstar Tribute">
-            <div class="art-info" tabindex="0"></div>
-        </div>
-        <div class="art-card" onclick="openLightbox('mh.jpg', 'MH Concept')">
-            <img src="mh.jpg" alt="Superstar Tribute">
-            <div class="art-info" tabindex="0">MH Concept</div>
-        </div>
-        <div class="art-card" onclick="openLightbox('michale.jpg', 'Vijay Concept')">
-            <img src="michale.jpg" alt="Superstar Tribute">
-            <div class="art-info" tabindex="0">Vijay Concept</div>
-        </div>
-        <div class="art-card" onclick="openLightbox('nithu.jpg', '')">
-            <img src="nithu.jpg" alt="Superstar Tribute">
-            <div class="art-info" tabindex="0"></div>
-        </div>
-
-
-
-
-
-
-        <div class="art-card" onclick="openLightbox('ajith.jpeg', 'Ajith Kumar Concept')">
-            <img src="ajith.jpeg" alt="Superstar Tribute">
-            <div class="art-info" tabindex="0">Ajith Kumar</div>
-        </div>
-        <div class="art-card" onclick="openLightbox('kantara.jpg', 'Kantara Concept')">
-            <img src="kantara.jpg" alt="Superstar Tribute">
-            <div class="art-info" tabindex="0">Kantara</div>
-        </div>
-        <div class="art-card" onclick="openLightbox('vijay sethupathi.jpeg', 'Vijay Sethupathi Concept')">
-            <img src="vijay sethupathi.jpeg" alt="Superstar Tribute">
-            <div class="art-info" tabindex="0">Vijay Sethupathi</div>
-        </div>
-        <div class="art-card" onclick="openLightbox('chatrapathi sivaji.jpeg', 'Chatrapathi Sivaji Concept')">
-            <img src="chatrapathi sivaji.jpeg" alt="Superstar Tribute">
-            <div class="art-info" tabindex="0">Chatrapathi Sivaji</div>
-        </div>
-        <div class="art-card" onclick="openLightbox('amma.jpeg', 'Amma Concept')">
-            <img src="amma.jpeg" alt="Superstar Tribute">
-            <div class="art-info" tabindex="0">Amma</div>
-        </div>
-        <div class="art-card" onclick="openLightbox('amma_father.jpeg', 'Amma Father Concept')">
-            <img src="amma_father.jpeg" alt="Superstar Tribute">
-            <div class="art-info" tabindex="0">Amma Father's drawing</div>
-        </div>
-        <div class="art-card" onclick="openLightbox('basha rajini.jpeg', 'Basha Rajini Concept')">
-            <img src="basha rajini.jpeg" alt="Superstar Tribute">
-            <div class="art-info" tabindex="0">Basha Rajini</div>
-        </div>
-        <div class="art-card" onclick="openLightbox('batista.jpeg', 'Batista Concept')">
-            <img src="batista.jpeg" alt="Superstar Tribute">
-            <div class="art-info" tabindex="0">Batista</div>
-        </div>
-        <div class="art-card" onclick="openLightbox('batista1.jpeg', 'Batista 1 Concept')">
-            <img src="batista1.jpeg" alt="Superstar Tribute">
-            <div class="art-info" tabindex="0">batista1</div>
-        </div>
-        <div class="art-card" onclick="openLightbox('beggar.jpeg', 'Blind Beggar Concept')">
-            <img src="beggar.jpeg" alt="Superstar Tribute">
-            <div class="art-info" tabindex="0">Blind Beggar Concept</div>
-        </div>
-        <div class="art-card" onclick="openLightbox('car.jpeg', 'Car Concept')">
-            <img src="car.jpeg" alt="Superstar Tribute">
-            <div class="art-info" tabindex="0">Car Concept</div>
-        </div>
-        <div class="art-card" onclick="openLightbox('car 3d.jpeg', 'Car 3D Concept')">
-            <img src="car 3d.jpeg" alt="Superstar Tribute">
-            <div class="art-info" tabindex="0">Car 3D Concept</div>
-        </div>
-         <div class="art-card" onclick="openLightbox('circle of life.jpeg', 'Circle of Life Concept')">
-            <img src="circle of life.jpeg" alt="Superstar Tribute">
-            <div class="art-info" tabindex="0">Circle of Life</div>
-        </div>
-        
-         <div class="art-card" onclick="openLightbox('corona.jpeg', 'Corona Concept')">
-            <img src="corona.jpeg" alt="Superstar Tribute">
-            <div class="art-info" tabindex="0">Corona Concept</div>
-        </div>
-         
-         <div class="art-card" onclick="openLightbox('elephant.jpeg', 'Elephant Concept')">
-            <img src="elephant.jpeg" alt="Superstar Tribute">
-            <div class="art-info" tabindex="0">Elephant Concept</div>
-        </div>
-         <div class="art-card" onclick="openLightbox('face.jpeg', 'Face Concept')">
-            <img src="face.jpeg" alt="Superstar Tribute">
-            <div class="art-info" tabindex="0">Face Concept</div>
-        </div>
-         <div class="art-card" onclick="openLightbox('line pencil art.jpeg', 'Line Pencil Art Concept')">
-            <img src="line pencil art.jpeg" alt="Superstar Tribute">
-            <div class="art-info" tabindex="0">Line Pencil Art Concept</div>
-        </div>
-         <div class="art-card" onclick="openLightbox('lion.jpeg', 'Lion Concept')">
-            <img src="lion.jpeg" alt="Superstar Tribute">
-            <div class="art-info" tabindex="0">Lion Concept</div>
-        </div>
-        <div class="art-card" onclick="openLightbox('Palaniswami.jpeg', 'Palaniswami Concept')">
-            <img src="Palaniswami.jpeg" alt="Superstar Tribute">
-            <div class="art-info" tabindex="0">Palaniswami Concept</div>
-        </div>
-        <div class="art-card" onclick="openLightbox('portrait.jpeg', 'Portrait Concept')">
-            <img src="portrait.jpeg" alt="Superstar Tribute">
-            <div class="art-info" tabindex="0">Portrait Concept</div>
-        </div>
-        <div class="art-card" onclick="openLightbox('portrait face.jpeg', 'Portrait Face Concept')">
-            <img src="portrait face.jpeg" alt="Superstar Tribute">
-            <div class="art-info" tabindex="0">Portrait Face Concept</div>
-        </div>
-        <div class="art-card" onclick="openLightbox('portrait friend.jpeg', 'Portrait Friend Concept')">
-            <img src="portrait friend.jpeg" alt="Superstar Tribute">
-            <div class="art-info" tabindex="0">Portrait Friend Concept</div>
-        </div>
-        <div class="art-card" onclick="openLightbox('portrait girl.jpeg', 'Portrait Girl Concept')">
-            <img src="portrait girl.jpeg" alt="Superstar Tribute">
-            <div class="art-info" tabindex="0">Portrait Girl Concept</div>
-        </div>
-        <div class="art-card" onclick="openLightbox('traditional.jpeg', 'Traditional Concept')">
-            <img src="traditional.jpeg" alt="Superstar Tribute">
-            <div class="art-info" tabindex="0">Traditional Concept</div>
-        </div>
-
-
-
-
-
-
-
-
-
-
-    </div>
-    <div id="lightbox" onclick="closeLightbox()">
-        <span class="close-btn">&times;</span>
-        <img id="lightbox-img" src="" alt="Large view">
-        <div id="lightbox-caption"></div>
     </div>
 
     <script>
-        function openLightbox(src, caption) {
-            document.getElementById('lightbox-img').src = src;
-            document.getElementById('lightbox-caption').innerText = caption;
-            document.getElementById('lightbox').style.display = 'flex';
+        // Data structure for images
+        const galleryData = [
+            { src: "images/Palaniswami.jpeg", title: "Palaniswami Concept", desc: "Palaniswami concept art.", category: "Pencil & Pen Art" },
+            { src: "images/a.jpg", title: "HipHop Tamizha", desc: "HipHop Tamizha portrait.", category: "Pencil & Pen Art" },
+            { src: "images/ajith.jpeg", title: "Ajith Kumar", desc: "Ajith Kumar pencil sketch.", category: "Pencil & Pen Art" },
+            { src: "images/amma.jpeg", title: "Amma", desc: "Mother's portrait.", category: "Pencil & Pen Art" },
+            { src: "images/amma.png", title: "Mother Baby Concept", desc: "Digital illustration of mother and baby.", category: "Illustrations" },
+            { src: "images/amma_father.jpeg", title: "Amma Father", desc: "Parents' drawing.", category: "Pencil & Pen Art" },
+            { src: "images/arjunreddy.png", title: "Arjun Reddy", desc: "Arjun Reddy illustration.", category: "Illustrations" },
+            { src: "images/baby.jpeg", title: "Baby Concept", desc: "Baby pencil sketch.", category: "Pencil & Pen Art" },
+            { src: "images/basha rajini.jpeg", title: "Basha Rajini", desc: "Basha Rajini concept.", category: "Pencil & Pen Art" },
+            { src: "images/batista.jpeg", title: "Batista", desc: "Batista portrait.", category: "Pencil & Pen Art" },
+            { src: "images/batista1.jpeg", title: "Batista 1", desc: "Batista portrait variant.", category: "Pencil & Pen Art" },
+            { src: "images/beach.jpeg", title: "Couples Concept", desc: "Couples at the beach.", category: "Pencil & Pen Art" },
+            { src: "images/beard.jpg", title: "Beard Concept", desc: "Beard pencil study.", category: "Pencil & Pen Art" },
+            { src: "images/beggar.jpeg", title: "Blind Beggar", desc: "Blind beggar concept art.", category: "Pencil & Pen Art" },
+            { src: "images/brindha.jpg", title: "Brindha", desc: "Brindha concept.", category: "Pencil & Pen Art" },
+            { src: "images/car 3d.jpeg", title: "Car 3D Concept", desc: "3D perspective of a car.", category: "Illustrations" },
+            { src: "images/car.jpeg", title: "Car Concept", desc: "Car sketch.", category: "Pencil & Pen Art" },
+            { src: "images/chatrapathi sivaji.jpeg", title: "Chatrapathi Sivaji", desc: "Chatrapathi Sivaji portrait.", category: "Pencil & Pen Art" },
+            { src: "images/circle of life.jpeg", title: "Circle of Life", desc: "Circle of life concept.", category: "Pencil & Pen Art" },
+            { src: "images/corona.jpeg", title: "Corona Concept", desc: "Corona pandemic concept.", category: "Pencil & Pen Art" },
+            { src: "images/darbar.jpg", title: "Darbar", desc: "Darbar Rajini concept.", category: "Pencil & Pen Art" },
+            { src: "images/dhanasekar.jpg", title: "Dhanasekar", desc: "Dhanasekar portrait.", category: "Pencil & Pen Art" },
+            { src: "images/dinesh.jpeg", title: "Dinesh", desc: "Dinesh portrait.", category: "Pencil & Pen Art" },
+            { src: "images/dulquer.jpg", title: "Dulquer", desc: "Dulquer portrait.", category: "Pencil & Pen Art" },
+            { src: "images/dulquer1.png", title: "Dulquer Illustration", desc: "Dulquer digital art.", category: "Illustrations" },
+            { src: "images/elephant.jpeg", title: "Elephant Concept", desc: "Elephant drawing.", category: "Pencil & Pen Art" },
+            { src: "images/face.jpeg", title: "Face Concept", desc: "Face sketch.", category: "Pencil & Pen Art" },
+            { src: "images/girl.jpeg", title: "Girl Concept", desc: "Girl sketching.", category: "Pencil & Pen Art" },
+            { src: "images/girlboy.jpg", title: "Girl and Boy", desc: "Girl and Boy concept.", category: "Pencil & Pen Art" },
+            { src: "images/girlwithhair.jpeg", title: "Girl with Hair", desc: "Girl with hair detail.", category: "Pencil & Pen Art" },
+            { src: "images/helmet.jpg", title: "Helmet Concept", desc: "Helmet study.", category: "Pencil & Pen Art" },
+            { src: "images/img.jpg", title: "Shiva Concept", desc: "Shiva sketching.", category: "Pencil & Pen Art" },
+            { src: "images/ironman.jpg", title: "Ironman", desc: "Ironman illustration.", category: "Illustrations" },
+            { src: "images/jacksparrow.jpeg", title: "Jack Sparrow", desc: "Jack Sparrow portrait.", category: "Pencil & Pen Art" },
+            { src: "images/joker.png", title: "Joker Concept", desc: "Joker vibrant illustration.", category: "Illustrations" },
+            { src: "images/joker1.jpeg", title: "Joker Variant", desc: "Joker alternative illustration.", category: "Illustrations" },
+            { src: "images/kabali.jpg", title: "Kabali Concept", desc: "Kabali Rajini concept.", category: "Pencil & Pen Art" },
+            { src: "images/kabali1.jpg", title: "Kabali Variant", desc: "Kabali alternative sketch.", category: "Pencil & Pen Art" },
+            { src: "images/kantara.jpg", title: "Kantara", desc: "Kantara spirit concept.", category: "Pencil & Pen Art" },
+            { src: "images/line pencil art.jpeg", title: "Line Pencil Art", desc: "Linear profile portrait.", category: "Pencil & Pen Art" },
+            { src: "images/lion.jpeg", title: "Lion Concept", desc: "Lion majestic portrait.", category: "Pencil & Pen Art" },
+            { src: "images/logo.jpeg", title: "Logo Design", desc: "Modern logo aesthetic.", category: "Logo Design" },
+            { src: "images/m.jpg", title: "M Concept", desc: "Portrait study.", category: "Pencil & Pen Art" },
+            { src: "images/mh.jpg", title: "MH Concept", desc: "Digital artwork study.", category: "Illustrations" },
+            { src: "images/michale.jpg", title: "Vijay Concept", desc: "Actor Vijay portrait.", category: "Pencil & Pen Art" },
+            { src: "images/nithu.jpg", title: "Nithu", desc: "Portrait of Nithu.", category: "Pencil & Pen Art" },
+            { src: "images/portrait face.jpeg", title: "Portrait Face", desc: "Detailed facial portrait.", category: "Pencil & Pen Art" },
+            { src: "images/portrait friend.jpeg", title: "Portrait Friend", desc: "Friend's portrait.", category: "Pencil & Pen Art" },
+            { src: "images/portrait girl.jpeg", title: "Portrait Girl", desc: "Girl's portrait.", category: "Pencil & Pen Art" },
+            { src: "images/portrait.jpeg", title: "Portrait", desc: "Classic portrait study.", category: "Pencil & Pen Art" },
+            { src: "images/rajini.jpg", title: "Rajinikanth", desc: "Rajini portrait sketch.", category: "Pencil & Pen Art" },
+            { src: "images/saint.jpeg", title: "Aghori on Motorcycle", desc: "Intricate digital concept art.", category: "Illustrations" },
+            { src: "images/sanju.jpg", title: "Sanju Portrait", desc: "Sanju detailed sketch.", category: "Pencil & Pen Art" },
+            { src: "images/shiva.jpeg", title: "Lord Shiva Meditation", desc: "Meditating Shiva drawing.", category: "Pencil & Pen Art" },
+            { src: "images/steps.jpeg", title: "3D Perspective Steps", desc: "3D visual steps illustration.", category: "Illustrations" },
+            { src: "images/sun.jpeg", title: "Tropical Sunset", desc: "Vibrant sunset digital art.", category: "Illustrations" },
+            { src: "images/superstar.jpg", title: "Superstar Tribute", desc: "Superstar illustration.", category: "Illustrations" },
+            { src: "images/suriya.jpg", title: "Suriya Sketch", desc: "Suriya pencil drawing.", category: "Pencil & Pen Art" },
+            { src: "images/thalaiva.jpg", title: "Thalaiva Art", desc: "Digital fan art of Thalaiva.", category: "Illustrations" },
+            { src: "images/traditional.jpeg", title: "Traditional", desc: "Traditional artwork.", category: "Pencil & Pen Art" },
+            { src: "images/vadivel.png", title: "Vadivelu", desc: "Vadivelu iconic digital art.", category: "Illustrations" },
+            { src: "images/vijay sethupathi.jpeg", title: "Vijay Sethupathi", desc: "Vijay Sethupathi sketch.", category: "Pencil & Pen Art" },
+            { src: "images/vikram.jpg", title: "Vikram Sketch", desc: "Actor Vikram portrait.", category: "Pencil & Pen Art" }
+        ];
+
+        // Initialize App
+        function initApp() {
+            renderGallery();
+            handleRouting();
+            window.addEventListener('hashchange', handleRouting);
         }
 
-        function closeLightbox() {
-            document.getElementById('lightbox').style.display = 'none';
+        // Routing Logic
+        function handleRouting() {
+            const hash = window.location.hash || '#home';
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.nav-buttons a').forEach(a => a.classList.remove('active'));
+
+            if (hash === '#about') {
+                document.getElementById('about-view').classList.add('active');
+                document.getElementById('nav-about').classList.add('active');
+            } else {
+                document.getElementById('home-view').classList.add('active');
+                document.getElementById('nav-home').classList.add('active');
+            }
         }
+
+        // Render Gallery
+        function renderGallery() {
+            const container = document.getElementById('gallery-container');
+            container.innerHTML = ''; // Clear current
+
+            galleryData.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'art-card';
+                card.onclick = () => openLightbox(item);
+
+                card.innerHTML = `
+                    <img src="${item.src}" alt="${item.title}">
+                    <div class="art-info-overlay">
+                        <div class="art-title">${item.title}</div>
+                        <div class="art-category">${item.category}</div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Lightbox Logic
+        function openLightbox(item) {
+            document.getElementById('lightbox-img').src = item.src;
+            document.getElementById('lightbox-title').innerText = item.title;
+            document.getElementById('lightbox-desc').innerText = item.desc;
+            
+            const lb = document.getElementById('lightbox');
+            lb.style.display = 'flex';
+            // Trigger reflow for transition
+            void lb.offsetWidth;
+            lb.classList.add('visible');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightbox(e) {
+            if (e && (e.target.id === 'lightbox-img' || e.target.classList.contains('lightbox-info'))) return;
+            const lb = document.getElementById('lightbox');
+            lb.classList.remove('visible');
+            setTimeout(() => {
+                lb.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }, 300);
+        }
+
+        // Run
+        document.addEventListener('DOMContentLoaded', initApp);
     </script>
-
-
-
 </body>
 </html>
